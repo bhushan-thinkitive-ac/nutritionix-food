@@ -1,0 +1,20 @@
+{
+  "_note": "Scan ~15 physical US grocery items. Fill upc (12-13 digits) and label_kcal per serving from the physical label. Rows with an empty upc are skipped.",
+  "upcs": [
+    {"name": "Yogurt (e.g. Chobani)", "upc": "", "label_kcal": null},
+    {"name": "Cereal (e.g. Cheerios)", "upc": "", "label_kcal": null},
+    {"name": "Soda can", "upc": "", "label_kcal": null},
+    {"name": "Granola / protein bar", "upc": "", "label_kcal": null},
+    {"name": "Peanut butter", "upc": "", "label_kcal": null},
+    {"name": "Bread", "upc": "", "label_kcal": null},
+    {"name": "Milk", "upc": "", "label_kcal": null},
+    {"name": "Chips", "upc": "", "label_kcal": null},
+    {"name": "Frozen meal", "upc": "", "label_kcal": null},
+    {"name": "Pasta sauce", "upc": "", "label_kcal": null},
+    {"name": "Crackers", "upc": "", "label_kcal": null},
+    {"name": "Cheese", "upc": "", "label_kcal": null},
+    {"name": "Juice", "upc": "", "label_kcal": null},
+    {"name": "Candy bar", "upc": "", "label_kcal": null},
+    {"name": "Canned soup", "upc": "", "label_kcal": null}
+  ]
+}

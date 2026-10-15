@@ -1,0 +1,7 @@
+<table>
+  <tr><th>Food</th><th>Brand</th><th>Portion</th><th>g</th><th>kcal</th><th>Protein</th><th>Carbs</th><th>Fat</th></tr>
+  {% for f in foods %}
+  <tr><td>{{ f.name }}</td><td>{{ f.brand|default:"—" }}</td><td>{{ f.qty }} {{ f.unit }}</td><td>{{ f.grams|floatformat:0 }}</td>
+      <td><b>{{ f.kcal|floatformat:0 }}</b></td><td>{{ f.protein|floatformat:1 }}</td><td>{{ f.carbs|floatformat:1 }}</td><td>{{ f.fat|floatformat:1 }}</td></tr>
+  {% empty %}<tr><td colspan="8" class="muted">No foods parsed.</td></tr>{% endfor %}
+</table>

@@ -1,0 +1,107 @@
+{% extends "poc/base.html" %}
+{% block content %}
+<div class="card">
+  <div class="row" style="align-items:center">
+    <div><h2 style="margin:0">Results sheet</h2>
+      <span class="muted">{% if results %}Last run {{ results.run_at }}{% else %}No run yet{% endif %} · datasets in <code>poc/data/</code></span></div>
+    <form method="post" action="{% url 'run_all' %}" onsubmit="this.querySelector('button').textContent='Running… (~1–2 min)'">{% csrf_token %}<button>Run all checks</button></form>
+    {% if results %}<a class="btn secondary" href="{% url 'download_csv' %}">Download CSV</a>{% endif %}
+  </div>
+</div>
+
+{% if results %}
+{% if results.errors %}<div class="alert"><b>{{ results.errors|length }} error(s)</b><ul>{% for e in results.errors|slice:":10" %}<li>{{ e }}</li>{% endfor %}</ul></div>{% endif %}
+
+<div class="card">
+  <h2>Pass bars</h2>
+  <table>
+    <tr><th>Check</th><th>Result</th><th>Pass bar</th><th>Status</th></tr>
+    {% for r in results.summary %}
+    <tr><td>{{ r.check }}</td><td><b>{{ r.value|default_if_none:"—" }}</b> {{ r.unit }}</td><td>{{ r.bar }}</td><td class="{{ r.status }}">{{ r.status }}</td></tr>
+    {% endfor %}
+  </table>
+</div>
+
+<div class="card">
+  <h2>1 · NL parsing ({{ results.nl|length }} meals)</h2>
+  <table>
+    <tr><th>ID</th><th>Input</th><th>Parsed foods</th><th>Missing</th><th>ms</th></tr>
+    {% for r in results.nl %}
+    <tr><td>{{ r.id }}</td><td>{{ r.text }}</td>
+      <td>{% for f in r.foods %}{{ f.qty }} {{ f.unit }} {{ f.name }} <span class="muted">({{ f.kcal|floatformat:0 }} kcal)</span>{% if not forloop.last %}<br>{% endif %}{% endfor %}</td>
+      <td class="{% if r.parsed_all %}ok{% else %}bad{% endif %}">{% if r.parsed_all %}✓{% else %}{{ r.missing|join:", " }}{% endif %}</td><td>{{ r.ms }}</td></tr>
+    {% endfor %}
+  </table>
+</div>
+
+<div class="card">
+  <h2>Calorie accuracy ({{ results.calories|length }} reference items)</h2>
+  <table>
+    <tr><th>ID</th><th>Item</th><th>Nutritionix portion</th><th>Nutritionix kcal</th><th>Reference kcal</th><th>Diff</th><th>Reference source</th></tr>
+    {% for r in results.calories %}
+    <tr><td>{{ r.id }}</td><td>{{ r.item }}</td><td>{{ r.portion|default:"not found" }}</td><td>{{ r.nutritionix_kcal|default_if_none:"—" }}</td><td>{{ r.reference_kcal }}</td>
+      <td class="{% if r.within_10 %}ok{% else %}bad{% endif %}">{{ r.diff_pct|default_if_none:"—" }}%</td><td class="muted">{{ r.source }}</td></tr>
+    {% endfor %}
+  </table>
+</div>
+
+<div class="card">
+  <h2>2 · Search relevance ({{ results.search|length }} queries)</h2>
+  <table>
+    <tr><th>Query</th><th>Type</th><th>Expected</th><th>Top-5 common</th><th>Top-5 branded</th><th>Hit</th><th>ms</th></tr>
+    {% for r in results.search %}
+    <tr><td>{{ r.query }}</td><td class="muted">{{ r.kind }}</td><td>{{ r.expected }}</td>
+      <td>{{ r.top_common|join:", " }}</td><td>{{ r.top_branded|join:"; " }}</td>
+      <td class="{% if r.hit %}ok{% else %}bad{% endif %}">{% if r.hit %}✓{% else %}✗{% endif %}</td><td>{{ r.ms }}</td></tr>
+    {% endfor %}
+  </table>
+</div>
+
+<div class="card">
+  <h2>3 · Barcode coverage ({{ results.upc|length }} UPCs)</h2>
+  {% if not results.upc %}<p class="muted">No UPCs in <code>poc/data/upcs.json</code> yet. Scan physical items and fill <code>upc</code> + <code>label_kcal</code>.</p>{% else %}
+  <table>
+    <tr><th>Item</th><th>UPC</th><th>Returned</th><th>Nutritionix kcal</th><th>Label kcal</th><th>Label match</th><th>ms</th></tr>
+    {% for r in results.upc %}
+    <tr><td>{{ r.name }}</td><td>{{ r.upc }}</td><td class="{% if r.found %}ok{% else %}bad{% endif %}">{{ r.returned|default:"not found" }}</td>
+      <td>{{ r.nutritionix_kcal|default_if_none:"—" }}</td><td>{{ r.label_kcal|default_if_none:"—" }}</td>
+      <td>{% if r.label_match %}✓{% elif r.found and r.label_kcal %}<span class="bad">✗</span>{% else %}—{% endif %}</td><td>{{ r.ms }}</td></tr>
+    {% endfor %}
+  </table>{% endif %}
+</div>
+
+<div class="card">
+  <h2>4 · Voice path</h2>
+  <table>
+    <tr><th>ID</th><th>Raw transcript</th><th>Raw → missing</th><th>LLM-cleaned</th><th>Cleaned → missing</th></tr>
+    {% for r in results.voice %}
+    <tr><td>{{ r.id }}</td><td>{{ r.raw }}<br><span class="muted">{{ r.raw_foods|join:", " }}</span></td>
+      <td class="{% if r.raw_missing %}bad{% else %}ok{% endif %}">{% if r.raw_missing %}{{ r.raw_missing|join:", " }}{% else %}✓{% endif %}</td>
+      <td>{% if r.cleaned %}{{ r.cleaned }}<br><span class="muted">{{ r.clean_foods|join:", " }}</span>{% else %}<span class="muted">not run</span>{% endif %}</td>
+      <td>{% if r.clean_missing is None %}—{% elif r.clean_missing %}<span class="bad">{{ r.clean_missing|join:", " }}</span>{% else %}<span class="ok">✓</span>{% endif %}</td></tr>
+    {% endfor %}
+  </table>
+</div>
+
+<div class="grid2">
+  <div class="card">
+    <h2>5 · Latency & rate limits</h2>
+    <table>
+      <tr><th>Endpoint</th><th>Calls</th><th>p50</th><th>p95</th><th>max</th></tr>
+      {% for r in results.latency %}<tr><td>{{ r.endpoint }}</td><td>{{ r.calls }}</td><td>{{ r.p50_ms }}</td><td>{{ r.p95_ms }}</td><td>{{ r.max_ms }}</td></tr>{% endfor %}
+    </table>
+    <h3>Rate-limit headers seen</h3>
+    {% if results.rate_limit_headers %}<table>{% for k, v in results.rate_limit_headers.items %}<tr><td>{{ k }}</td><td>{{ v }}</td></tr>{% endfor %}</table>
+    {% else %}<p class="muted">None returned. Check the tier limits in the Nutritionix developer portal.</p>{% endif %}
+  </div>
+  <div class="card">
+    <h2>6 · Micronutrients returned ({{ results.micronutrients|length }})</h2>
+    <p class="muted">Distinct <code>full_nutrients</code> attr_ids across all NL results, plus how many foods carried each one. Compare against the plan-target list from clinical.</p>
+    <table>
+      <tr><th>attr_id</th><th>Nutrient</th><th>Unit</th><th>Foods</th></tr>
+      {% for m in results.micronutrients %}<tr><td>{{ m.attr_id }}</td><td>{{ m.name }}</td><td>{{ m.unit }}</td><td>{{ m.foods_with_value }}</td></tr>{% endfor %}
+    </table>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

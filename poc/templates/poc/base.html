@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nutritionix POC</title>
+<style>
+  :root { --bg:#f7f7f5; --card:#fff; --ink:#1d1d1b; --muted:#6b6b66; --line:#e3e3de; --accent:#2f6f4f; --pass:#1f7a3f; --fail:#b3261e; --na:#8a6d00; }
+  * { box-sizing: border-box; }
+  body { margin:0; font:15px/1.5 system-ui, -apple-system, Segoe UI, sans-serif; background:var(--bg); color:var(--ink); }
+  header { background:var(--card); border-bottom:1px solid var(--line); padding:12px 24px; display:flex; gap:24px; align-items:center; flex-wrap:wrap; }
+  header b { font-size:17px; }
+  nav a { margin-right:16px; color:var(--muted); text-decoration:none; }
+  nav a.on, nav a:hover { color:var(--accent); font-weight:600; }
+  main { max-width:1150px; margin:0 auto; padding:24px 16px 48px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:18px 20px; margin-bottom:18px; overflow-x:auto; }
+  h2 { margin:0 0 12px; font-size:18px; } h3 { margin:18px 0 8px; font-size:15px; }
+  table { border-collapse:collapse; width:100%; font-size:14px; }
+  th, td { text-align:left; padding:6px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
+  th { color:var(--muted); font-weight:600; background:#fafaf8; }
+  input[type=text], textarea { width:100%; padding:9px 11px; border:1px solid var(--line); border-radius:8px; font:inherit; }
+  textarea { min-height:80px; }
+  button, .btn { background:var(--accent); color:#fff; border:0; border-radius:8px; padding:9px 16px; font:inherit; cursor:pointer; text-decoration:none; display:inline-block; }
+  .btn.secondary { background:#fff; color:var(--accent); border:1px solid var(--accent); }
+  .row { display:flex; gap:10px; align-items:flex-start; } .row > :first-child { flex:1; }
+  .PASS { color:var(--pass); font-weight:700; } .FAIL { color:var(--fail); font-weight:700; } .N\/A { color:var(--na); font-weight:700; }
+  .ok { color:var(--pass); } .bad { color:var(--fail); }
+  .muted { color:var(--muted); font-size:13px; }
+  .alert { background:#fdecea; color:var(--fail); border:1px solid #f5c2bd; padding:10px 14px; border-radius:8px; margin-bottom:16px; }
+  .warn { background:#fff7e0; color:#6b5200; border:1px solid #f0dc9c; padding:10px 14px; border-radius:8px; margin-bottom:16px; }
+  footer { text-align:center; color:var(--muted); font-size:13px; padding:16px; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:18px; } @media (max-width:800px){ .grid2 { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<header>
+  <b>Nutritionix POC</b>
+  <nav>
+    <a href="{% url 'dashboard' %}" class="{% if not page %}on{% endif %}">Results sheet</a>
+    <a href="{% url 'natural' %}" class="{% if page == 'natural' %}on{% endif %}">Natural language</a>
+    <a href="{% url 'search' %}" class="{% if page == 'search' %}on{% endif %}">Search</a>
+    <a href="{% url 'barcode' %}" class="{% if page == 'barcode' %}on{% endif %}">Barcode</a>
+    <a href="{% url 'voice' %}" class="{% if page == 'voice' %}on{% endif %}">Voice</a>
+  </nav>
+</header>
+<main>
+  {% if not nx_configured %}<div class="warn">Nutritionix keys missing. Set <code>NUTRITIONIX_APP_ID</code> and <code>NUTRITIONIX_APP_KEY</code> in <code>.env</code> and restart the server.</div>{% endif %}
+  {% if error %}<div class="alert">{{ error }}</div>{% endif %}
+  {% block content %}{% endblock %}
+</main>
+<footer>Powered by Nutritionix</footer>
+</body>
+</html>

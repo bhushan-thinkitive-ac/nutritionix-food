@@ -1,0 +1,22 @@
+{% extends "poc/base.html" %}
+{% block content %}
+<div class="card">
+  <h2>Search → /v2/search/instant</h2>
+  <form method="get"><div class="row"><input type="text" name="q" value="{{ query }}" placeholder="chobani vanilla yogurt"><button>Search</button></div></form>
+</div>
+{% if common is not None %}
+<p class="muted">{{ ms }} ms</p>
+<div class="grid2">
+  <div class="card"><h2>Common (top 5)</h2>
+    <table><tr><th>Food</th><th>Serving</th></tr>
+    {% for c in common %}<tr><td>{{ c.food_name }}</td><td>{{ c.serving_qty }} {{ c.serving_unit }}</td></tr>
+    {% empty %}<tr><td colspan="2" class="muted">None</td></tr>{% endfor %}</table>
+  </div>
+  <div class="card"><h2>Branded (top 5)</h2>
+    <table><tr><th>Brand</th><th>Food</th><th>kcal</th></tr>
+    {% for b in branded %}<tr><td>{{ b.brand_name }}</td><td>{{ b.food_name }}</td><td>{{ b.nf_calories|floatformat:0 }}</td></tr>
+    {% empty %}<tr><td colspan="3" class="muted">None</td></tr>{% endfor %}</table>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

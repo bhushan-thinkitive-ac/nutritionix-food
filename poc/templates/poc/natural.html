@@ -1,0 +1,12 @@
+{% extends "poc/base.html" %}
+{% block content %}
+<div class="card">
+  <h2>Natural language → /v2/natural/nutrients</h2>
+  <form method="post">{% csrf_token %}
+    <div class="row"><textarea name="query" placeholder="2 eggs, toast with butter, orange juice">{{ query }}</textarea><button>Parse</button></div>
+  </form>
+</div>
+{% if foods is not None %}
+<div class="card"><h2>Result <span class="muted">{{ ms }} ms</span></h2>{% include "poc/_foods_table.html" %}</div>
+{% endif %}
+{% endblock %}

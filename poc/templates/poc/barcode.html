@@ -1,0 +1,22 @@
+{% extends "poc/base.html" %}
+{% block content %}
+<div class="card">
+  <h2>Barcode → /v2/search/item?upc=</h2>
+  <form method="get"><div class="row"><input type="text" name="upc" value="{{ upc }}" placeholder="UPC (12–13 digits)"><button>Look up</button></div></form>
+</div>
+{% if searched %}
+<div class="card">
+  {% if food %}
+  <h2>{{ food.brand_name }} — {{ food.food_name }} <span class="muted">{{ ms }} ms</span></h2>
+  <table>
+    <tr><th>Serving</th><td>{{ food.serving_qty }} {{ food.serving_unit }} ({{ food.serving_weight_grams|default:"?" }} g)</td></tr>
+    <tr><th>Calories</th><td>{{ food.nf_calories }}</td></tr>
+    <tr><th>Protein / Carbs / Fat</th><td>{{ food.nf_protein }} / {{ food.nf_total_carbohydrate }} / {{ food.nf_total_fat }} g</td></tr>
+    <tr><th>Sugars / Fiber</th><td>{{ food.nf_sugars }} / {{ food.nf_dietary_fiber }} g</td></tr>
+    <tr><th>Sodium</th><td>{{ food.nf_sodium }} mg</td></tr>
+    <tr><th>Ingredients</th><td class="muted">{{ food.nf_ingredient_statement|default:"—" }}</td></tr>
+  </table>
+  {% else %}<h2 class="bad">Not found <span class="muted">{{ ms }} ms</span></h2>{% endif %}
+</div>
+{% endif %}
+{% endblock %}

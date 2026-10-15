@@ -1,0 +1,19 @@
+{% extends "poc/base.html" %}
+{% block content %}
+<div class="card">
+  <h2>Voice path: transcript → (LLM cleanup) → /v2/natural/nutrients</h2>
+  {% if not llm_configured %}<div class="warn">LLM cleanup off. Set <code>ANTHROPIC_API_KEY</code> or <code>BEDROCK_AWS_REGION</code> in <code>.env</code> to compare.</div>{% endif %}
+  <form method="post">{% csrf_token %}
+    <div class="row"><textarea name="transcript" placeholder="uhh I had like two eggs and um some toast">{{ transcript }}</textarea><button>Run</button></div>
+  </form>
+</div>
+{% if raw_foods is not None %}
+<div class="grid2">
+  <div class="card"><h2>Raw transcript</h2>{% include "poc/_foods_table.html" with foods=raw_foods %}</div>
+  <div class="card"><h2>After LLM cleanup</h2>
+    {% if cleaned %}<p class="muted">“{{ cleaned }}”</p>{% include "poc/_foods_table.html" with foods=clean_foods %}
+    {% else %}<p class="muted">Not run.</p>{% endif %}
+  </div>
+</div>
+{% endif %}
+{% endblock %}

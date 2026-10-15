@@ -1,0 +1,25 @@
+{
+  "_note": "pass if 'expected' (alternatives by '|') appears in a top-5 common OR top-5 branded food_name.",
+  "queries": [
+    {"query": "banana", "expected": "banana", "kind": "common"},
+    {"query": "brown rice", "expected": "brown rice", "kind": "common"},
+    {"query": "scrambled eggs", "expected": "scrambled egg", "kind": "common"},
+    {"query": "avocado", "expected": "avocado", "kind": "common"},
+    {"query": "chicken breast", "expected": "chicken breast", "kind": "common"},
+    {"query": "oatmeal", "expected": "oat", "kind": "common"},
+    {"query": "greek yogurt", "expected": "greek yogurt", "kind": "common"},
+    {"query": "sweet potato", "expected": "sweet potato", "kind": "common"},
+    {"query": "chobani vanilla yogurt", "expected": "vanilla", "kind": "branded"},
+    {"query": "big mac", "expected": "big mac", "kind": "branded"},
+    {"query": "chipotle burrito bowl", "expected": "bowl", "kind": "branded"},
+    {"query": "panera broccoli cheddar soup", "expected": "broccoli cheddar", "kind": "branded"},
+    {"query": "starbucks caffe latte", "expected": "latte", "kind": "branded"},
+    {"query": "cheerios", "expected": "cheerios", "kind": "branded"},
+    {"query": "clif bar", "expected": "clif", "kind": "branded"},
+    {"query": "bananna", "expected": "banana", "kind": "misspelling"},
+    {"query": "brocoli", "expected": "broccoli", "kind": "misspelling"},
+    {"query": "chiken salad", "expected": "chicken salad", "kind": "misspelling"},
+    {"query": "yoghurt", "expected": "yogurt", "kind": "misspelling"},
+    {"query": "spagetti", "expected": "spaghetti", "kind": "misspelling"}
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "transcripts": [
+    {"id": "V01", "text": "uhh I had like two eggs and um some toast", "expected_items": ["egg", "toast|bread"]},
+    {"id": "V02", "text": "so for lunch I got a, uh, turkey sandwich, no wait it was a chicken sandwich, and a coke", "expected_items": ["chicken|sandwich", "coke|cola"]},
+    {"id": "V03", "text": "um breakfast was oatmeal with like a banana on top and uh coffee you know with milk", "expected_items": ["oat", "banana", "coffee", "milk"]},
+    {"id": "V04", "text": "I think I had maybe one and a half cups of rice and uh some dal I guess", "expected_items": ["rice", "dal|lentil"]},
+    {"id": "V05", "text": "okay so like a big mac and uhh medium fries and like a diet coke yeah", "expected_items": ["big mac", "fries", "diet coke|coke|cola"]}
+  ]
+}
